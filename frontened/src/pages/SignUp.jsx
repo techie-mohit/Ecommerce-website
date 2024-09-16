@@ -3,6 +3,7 @@ import loginIcons from '../assest/signin.gif'
 import { MdRemoveRedEye } from "react-icons/md";
 import { IoEyeOff } from "react-icons/io5";
 import {Link} from "react-router-dom"; 
+import imageToBase64 from "../helpers/imageToBase64";
 
 
 const SignUp = () => {
@@ -13,7 +14,8 @@ const SignUp = () => {
         username: "",
         email: "",
         password: "",
-        confirmpassword: ""
+        confirmpassword: "",
+        profilePic: ""
     })
 
     const handleOnChange =(e)=>{
@@ -27,9 +29,25 @@ const SignUp = () => {
         })
     }
 
+    const handleUploadPic= async(e)=>{
+        const file= e.target.files[0];
+
+        const imagePic = await imageToBase64(file);
+
+        console.log(imagePic);
+        setData((prev)=>{
+            return{
+                ...prev,
+                profilePic : imagePic
+            }
+        })
+    }
+
     const handleSubmit = (e)=>{
         e.preventDefault()
     }
+
+
 
     console.log("data login ", data);
   return (
@@ -40,14 +58,14 @@ const SignUp = () => {
 
                 <div className="w-20 h-20 mx-auto relative overflow-hidden rounded-full">
                     <div>
-                    <img src= {loginIcons} alt="login icons"/>
+                    <img src= {data.profilePic || loginIcons} alt="login icons"/>
                     </div>
                     <form>
                       <label>
                         <div className="text-xs bg-slate-200 cursor-pointer py-3 bg-opacity-80 text-center absolute bottom-0 w-full ">
                           Upload Photo
                         </div>
-                        <input type="file" className="hidden" onChange/>
+                        <input type="file" className="hidden" onChange={handleUploadPic}/>
                       </label>
                     </form>
                 </div>
@@ -63,6 +81,7 @@ const SignUp = () => {
                             value= {data.username} 
                             onChange={handleOnChange}
                             id="username" 
+                            required
                             className=" w-full h-full outline-none bg-transparent" />
                         </div>
                     </div>
@@ -76,6 +95,7 @@ const SignUp = () => {
                             value= {data.email} 
                             onChange={handleOnChange}
                             id="email" 
+                            required
                             className=" w-full h-full outline-none bg-transparent" />
                         </div>
                     </div>
@@ -89,6 +109,7 @@ const SignUp = () => {
                             value={data.password}
                             onChange={handleOnChange}
                             id="password" 
+                            required
                             className="w-full h-full outline-none bg-transparent" />
                             <div className="cursor-pointer" onClick={()=>setShowPassword((prev)=>!prev)}>
                                 <span>{showPassword ? <IoEyeOff /> : <MdRemoveRedEye />}</span>
@@ -104,7 +125,8 @@ const SignUp = () => {
                             name="confirmpassword"
                             value={data.confirmpassword}
                             onChange={handleOnChange}
-                            id="password" 
+                            id="password"
+                            required 
                             className="w-full h-full outline-none bg-transparent" />
                             <div className="cursor-pointer" onClick={()=>setShowConfirmPassword((prev)=>!prev)}>
                                 <span>{  showConfirmPassword ? <IoEyeOff /> : <MdRemoveRedEye />}</span>
