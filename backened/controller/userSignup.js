@@ -7,6 +7,13 @@ async function userSignupController(req,res){
     try{
         const {email, password, name} =req.body;
 
+        const user = await userModel.findOne({email})
+
+
+        if(user){
+            throw new Error ("Already user exixt");
+        }
+
         if(!email){
             throw new Error("please provide email");
         }
@@ -16,7 +23,7 @@ async function userSignupController(req,res){
         if(!name){
             throw new Error("please provide name");
         }
-        const hashPassword = bcrypt.hashSync(password);
+        const hashPassword = await  bcrypt.hashSync(password);
 
         if(!hashPassword){
             throw new Error ("Something is wrong");
@@ -27,10 +34,8 @@ async function userSignupController(req,res){
             password: hashPassword
         }
 
-
-
         const userData = new userModel(payload);
-        const saveUser= await userData.save();
+        const saveUser = await userData.save();
 
         res.status(201).json({
             data:saveUser,
@@ -40,8 +45,9 @@ async function userSignupController(req,res){
         })
     }
     catch(err){
+        console.log(err.message);
         res.json({
-            message:err,
+            message:err.message || err,
             error: true,
             success: false,
         })

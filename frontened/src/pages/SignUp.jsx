@@ -4,6 +4,7 @@ import { MdRemoveRedEye } from "react-icons/md";
 import { IoEyeOff } from "react-icons/io5";
 import {Link} from "react-router-dom"; 
 import imageToBase64 from "../helpers/imageToBase64";
+import SummaryApi from "../common";
 
 
 const SignUp = () => {
@@ -43,13 +44,34 @@ const SignUp = () => {
         })
     }
 
-    const handleSubmit = (e)=>{
+    const handleSubmit = async(e)=>{
         e.preventDefault()
+
+        if(data.password === data.confirmpassword){
+            try{
+                const dataResponse = await fetch('http://localhost:8080/api/signup',{
+                    method : 'POST',
+                    headers : {
+                        "content-type" : "application/json"
+                    },
+                    body : JSON.stringify(data)
+                })
+                if(!dataResponse.ok){
+                    throw new Error("network was not accepted")
+                }
+                const dataApi= await dataResponse.json();
+                console.log(dataApi);
+            }
+            catch(err){
+                console.log(err);
+            }
+        }
+        else{
+            console.log("please check password and confirm password");
+        }
+
+        
     }
-
-
-
-    console.log("data login ", data);
   return (
     <section id="signup">
         <div className="mx-auto container p-4" >
